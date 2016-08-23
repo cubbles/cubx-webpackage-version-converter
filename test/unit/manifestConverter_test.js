@@ -34,14 +34,14 @@
       done();
     });
   });
-  // afterEach(function (done) {
-  //   fs.remove(testPath, function (err) {
-  //     if (err) {
-  //       throw new Error(err);
-  //     }
-  //     done();
-  //   });
-  // });
+  afterEach(function (done) {
+    fs.remove(testPath, function (err) {
+      if (err) {
+        throw new Error(err);
+      }
+      done();
+    });
+  });
   describe('ManifestConverter', function () {
     describe('Single converter methods', function () {
       var manifest;
