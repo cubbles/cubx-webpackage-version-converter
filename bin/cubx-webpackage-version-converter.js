@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-env node */
 'use strict';
-var converter = require('../lib/convderter');
+var Converter = require('../lib/converter');
 var commandLineArgs = require('command-line-args');
 
 var webpackagePath;
@@ -18,5 +18,5 @@ if (!options.path) {
 } else {
   webpackagePath = options.path;
 }
-
-converter.convert(webpackagePath);
+var converter = new Converter(webpackagePath);
+converter.convert();
