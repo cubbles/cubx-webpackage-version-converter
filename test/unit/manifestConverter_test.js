@@ -7,16 +7,15 @@
   var converter;
   var path;
   var fs;
-  var testPath;
   var webpackageName;
   var webpackagePath;
+  var testRootPath;
   beforeEach(function (done) {
     path = require('path');
     fs = require('fs-extra');
-    var testRootPath = path.join(process.cwd(), 'test');
+    testRootPath = path.join(process.cwd(), 'test');
     webpackageName = 'my-webpackage';
-    testPath = path.resolve(testRootPath, 'webpackages', webpackageName);
-    console.log('testPath', testPath);
+    var testPath = path.resolve(testRootPath, 'webpackages', webpackageName);
     webpackagePath = testPath;
     var tempPath = path.resolve(__dirname, '../resources/8.3.1/');
     var Converter = require('../../lib/converter');
@@ -35,7 +34,8 @@
     });
   });
   afterEach(function (done) {
-    fs.remove(testPath, function (err) {
+    var testPathRoot = path.resolve(testRootPath, 'webpackages');
+    fs.remove(testPathRoot, function (err) {
       if (err) {
         throw new Error(err);
       }
