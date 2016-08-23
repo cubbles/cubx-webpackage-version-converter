@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+ - "4"
+
+before_install:
+ - npm install -g grunt-cli
+
+script:
+ - grunt test
+
+notifications:
+  email:
+    recipients:
+      - jtrs@incowia.com
+      - pwr@incowia.com
+      - hrbu@incowia.com
+    on_success: change
+    on_failure: always
