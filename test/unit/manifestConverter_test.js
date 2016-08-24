@@ -70,7 +70,7 @@
           converter._removeSingleEndpointsFromArtifacts(manifest);
           expect(manifest.artifacts.apps[ 0 ]).to.not.have.ownProperty('endpoints');
           expect(manifest.artifacts.compoundComponents[ 0 ]).to.not.have.ownProperty('endpoints');
-          expect(manifest.artifacts.elementaryComponents[ 0 ]).to.not.have.ownProperty('endpoints');
+          expect(manifest.artifacts.elementaryComponents[ 1 ]).to.not.have.ownProperty('endpoints');
           expect(manifest.artifacts.utilities[ 0 ]).to.not.have.ownProperty('endpoints');
           expect(manifest.artifacts.utilities[ 1 ]).to.have.ownProperty('endpoints');
         });
@@ -86,10 +86,10 @@
           expect(manifest.artifacts.compoundComponents[ 0 ].dependencies).to.eql(originalManifest.artifacts.compoundComponents[ 0 ].endpoints[ 0 ].dependencies);
           expect(manifest.artifacts.compoundComponents[ 0 ].resources).to.eql(originalManifest.artifacts.compoundComponents[ 0 ].endpoints[ 0 ].resources);
 
-          expect(manifest.artifacts.elementaryComponents[ 0 ]).to.have.ownProperty('dependencies');
-          expect(manifest.artifacts.elementaryComponents[ 0 ]).to.have.ownProperty('resources');
-          expect(manifest.artifacts.elementaryComponents[ 0 ].dependencies).to.eql(originalManifest.artifacts.elementaryComponents[ 0 ].endpoints[ 0 ].dependencies);
-          expect(manifest.artifacts.elementaryComponents[ 0 ].resources).to.eql(originalManifest.artifacts.elementaryComponents[ 0 ].endpoints[ 0 ].resources);
+          expect(manifest.artifacts.elementaryComponents[ 1 ]).to.have.ownProperty('dependencies');
+          expect(manifest.artifacts.elementaryComponents[ 1 ]).to.have.ownProperty('resources');
+          expect(manifest.artifacts.elementaryComponents[ 1 ].dependencies).to.eql(originalManifest.artifacts.elementaryComponents[ 0 ].endpoints[ 0 ].dependencies);
+          expect(manifest.artifacts.elementaryComponents[ 1 ].resources).to.eql(originalManifest.artifacts.elementaryComponents[ 0 ].endpoints[ 0 ].resources);
 
           expect(manifest.artifacts.utilities[ 0 ]).to.not.have.ownProperty('dependencies');
           expect(manifest.artifacts.utilities[ 0 ]).to.have.ownProperty('resources');

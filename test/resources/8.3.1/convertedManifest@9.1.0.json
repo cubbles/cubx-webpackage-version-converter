@@ -55,7 +55,7 @@
         ],
         "dependencies": [
           {
-            "artifactId": "my-util1-main"
+            "artifactId": "my-util1"
           },
           {
             "artifactId": "generic-view",
@@ -67,6 +67,12 @@
             "artifactId": "station-view",
             "webpackageId": "com.incowia.emob.view@1.0.0-SNAPSHOT",
             "endpointId": "main"
+          },
+          {
+            "artifactId": "my-elementary-main"
+          },
+          {
+            "artifactId": "my-elementary2"
           }
         ],
         "slots": [
@@ -108,6 +114,14 @@
             "memberId": "stationView",
             "artifactId": "station-view",
             "displayName": "Korrelation - Fahrzeuge pro Carsharing-Station"
+          },
+          {
+            "memberId": "my-elementary",
+            "artifactId": "my-elementary-main"
+          },
+          {
+            "memberId": "my-elementary2",
+            "artifactId": "my-elementary2"
           }
         ],
         "connections": [
@@ -152,7 +166,7 @@
     ],
     "elementaryComponents": [
       {
-        "artifactId": "my-elementary",
+        "artifactId": "my-elementary-main",
         "description": "This elementary demonstrates ...",
         "slots": [
           {
@@ -196,7 +210,105 @@
             "endpointId": "htmlimport"
           },
           {
-            "artifactId": "my-artifact-main"
+            "artifactId": "my-artifact"
+          }
+        ]
+      },
+      {
+        "artifactId": "my-elementary-html-import",
+        "description": "This elementary demonstrates ...",
+        "slots": [
+          {
+            "slotId": "slot1",
+            "type": "number",
+            "direction": [
+              "input"
+            ]
+          },
+          {
+            "slotId": "slot2",
+            "type": "number",
+            "direction": [
+              "input",
+              "output"
+            ]
+          },
+          {
+            "slotId": "slot13",
+            "type": "string",
+            "value": "function(x, y) {return x + y}"
+          }
+        ],
+        "resources": [
+          "my-elementary.html"
+        ],
+        "dependencies": [
+          {
+            "artifactId": "bar-chart",
+            "webpackageId": "d3-charts-lib@1.0",
+            "endpointId": "main"
+          },
+          {
+            "artifactId": "component1",
+            "webpackageId": "com.hm.demos.aviator@1.0",
+            "endpointId": "htmlimport"
+          },
+          {
+            "artifactId": "component2",
+            "webpackageId": "com.hm.demos.aviator@1.0",
+            "endpointId": "htmlimport"
+          },
+          {
+            "artifactId": "my-artifact"
+          }
+        ]
+      },
+      {
+        "artifactId": "my-elementary2",
+        "description": "This elementary demonstrates ...",
+        "slots": [
+          {
+            "slotId": "slot1",
+            "type": "number",
+            "direction": [
+              "input"
+            ]
+          },
+          {
+            "slotId": "slot2",
+            "type": "number",
+            "direction": [
+              "input",
+              "output"
+            ]
+          },
+          {
+            "slotId": "slot13",
+            "type": "string",
+            "value": "function(x, y) {return x + y}"
+          }
+        ],
+        "resources": [
+          "my-elementary.html"
+        ],
+        "dependencies": [
+          {
+            "artifactId": "bar-chart",
+            "webpackageId": "d3-charts-lib@1.0",
+            "endpointId": "main"
+          },
+          {
+            "artifactId": "component1",
+            "webpackageId": "com.hm.demos.aviator@1.0",
+            "endpointId": "htmlimport"
+          },
+          {
+            "artifactId": "component2",
+            "webpackageId": "com.hm.demos.aviator@1.0",
+            "endpointId": "htmlimport"
+          },
+          {
+            "artifactId": "my-artifact"
           }
         ]
       }
