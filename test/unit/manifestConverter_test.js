@@ -4,12 +4,14 @@
   'use strict';
   var convertedManifest910;
   var manifest831;
-  var converter;
+  var convertedManifest910WithRteUpdate;
+  var webpackageConverter;
   var path;
   var fs;
   var webpackageName;
   var webpackagePath;
   var testRootPath;
+  var rteVersion;
   beforeEach(function (done) {
     path = require('path');
     fs = require('fs-extra');
@@ -17,9 +19,10 @@
     webpackageName = 'my-webpackage';
     var testPath = path.resolve(testRootPath, 'webpackages', webpackageName);
     webpackagePath = testPath;
+    rteVersion = '2.0.0';
     var tempPath = path.resolve(__dirname, '../resources/8.3.1/');
-    var Converter = require('../../lib/converter');
-    converter = new Converter(webpackagePath);
+    var WebpackageConverter = require('../../lib/webpackageConverter');
+    webpackageConverter = new WebpackageConverter(webpackagePath, rteVersion);
     fs.copy(tempPath, testPath, function (err) {
       if (err) {
         throw new Error(err);
@@ -29,6 +32,8 @@
         convertedManifest910 = fs.readFileSync(pathName, 'utf8');
         pathName = path.resolve(testPath, 'manifest@8.3.1.json');
         manifest831 = fs.readFileSync(pathName, 'utf8');
+        pathName = path.resolve(testPath, 'convertedManifest@9.1.0withRteUpdate.json');
+        convertedManifest910WithRteUpdate = fs.readFileSync(pathName, 'utf8');
       }
       done();
     });
@@ -54,7 +59,7 @@
       });
       describe('#_addResourcesArrayToArtifacts()', function () {
         it('should add property "resources" containing an empty array to each artifact out of type [elementaryComponents|compoundComponents|utilities].', function () {
-          converter._addResourcesArrayToArtifacts(manifest);
+          webpackageConverter._addResourcesArrayToArtifacts(manifest);
           Object.keys(manifest.artifacts).forEach(function (artifactType) {
             if (artifactType !== 'apps') {
               manifest.artifacts[ artifactType ].forEach(function (artifact) {
@@ -67,7 +72,7 @@
       });
       describe('#_removeSingleEndpointsFromArtifacts()', function () {
         it('should remove "endpoints" property from all artifacts which have exactly one endpoint.', function () {
-          converter._removeSingleEndpointsFromArtifacts(manifest);
+          webpackageConverter._removeSingleEndpointsFromArtifacts(manifest);
           expect(manifest.artifacts.apps[ 0 ]).to.not.have.ownProperty('endpoints');
           expect(manifest.artifacts.compoundComponents[ 0 ]).to.not.have.ownProperty('endpoints');
           expect(manifest.artifacts.elementaryComponents[ 1 ]).to.not.have.ownProperty('endpoints');
@@ -75,7 +80,7 @@
           expect(manifest.artifacts.utilities[ 1 ]).to.have.ownProperty('endpoints');
         });
         it('should move "dependencies" and "resources" from the artifacts single endpoint to artifact itself.', function () {
-          converter._removeSingleEndpointsFromArtifacts(manifest);
+          webpackageConverter._removeSingleEndpointsFromArtifacts(manifest);
           expect(manifest.artifacts.apps[ 0 ]).to.have.ownProperty('dependencies');
           expect(manifest.artifacts.apps[ 0 ]).to.have.ownProperty('resources');
           expect(manifest.artifacts.apps[ 0 ].dependencies).to.eql(originalManifest.artifacts.apps[ 0 ].endpoints[ 0 ].dependencies);
@@ -96,7 +101,7 @@
           expect(manifest.artifacts.utilities[ 0 ].resources).to.eql(originalManifest.artifacts.utilities[ 0 ].endpoints[ 0 ].resources);
         });
         it('should not append "endpointId" of removed endpoint to "artifactId" using - separator.', function () {
-          converter._removeSingleEndpointsFromArtifacts(manifest);
+          webpackageConverter._removeSingleEndpointsFromArtifacts(manifest);
           var artifactId = originalManifest.artifacts.apps[ 0 ].artifactId;
 
           expect(manifest.artifacts.apps[ 0 ].artifactId).to.eql(artifactId);
@@ -114,11 +119,11 @@
       describe('#_convertArtifactDependencyItems()', function () {
         beforeEach(function () {
           manifest = JSON.parse(manifest831);
-          converter._removeSingleEndpointsFromArtifacts(manifest);
-          converter._convertMultipleEndpointsToArtifacts(manifest);
+          webpackageConverter._removeSingleEndpointsFromArtifacts(manifest);
+          webpackageConverter._convertMultipleEndpointsToArtifacts(manifest);
         });
         it('should convert dependency "[webpackageId]/[artifactId]/[endpointId]" to {webpackageId: "[webpackageId]", artifactId: "[artifactId]#[endpointId]"}.', function () {
-          converter._convertArtifactDependencyItems(manifest);
+          webpackageConverter._convertArtifactDependencyItems(manifest);
           var dependencies = manifest.artifacts.apps[ 0 ].dependencies;
           expect(dependencies).to.eql(convertedManifest.artifacts.apps[ 0 ].dependencies);
 
@@ -131,14 +136,14 @@
           expect(dependencies).to.eql(convertedManifest.artifacts.utilities[ 2 ].dependencies);
         });
         it('should convert dependency "this/[artifactId]/[endpointId]" to object {artifactId: "[artifactId]#[endpointId]"}.', function () {
-          converter._convertArtifactDependencyItems(manifest);
+          webpackageConverter._convertArtifactDependencyItems(manifest);
           var dependency = manifest.artifacts.elementaryComponents[ 0 ].dependencies[ 3 ];
           expect(dependency).to.eql(convertedManifest.artifacts.elementaryComponents[ 0 ].dependencies[ 3 ]);
         });
       });
       describe('#_convertMultipleEndpointsToArtifacts()', function () {
         it('should remove all artifacts with multiple endpoints', function () {
-          converter._convertMultipleEndpointsToArtifacts(manifest);
+          webpackageConverter._convertMultipleEndpointsToArtifacts(manifest);
           Object.keys(manifest.artifacts).forEach(function (artifactType) {
             manifest.artifacts[ artifactType ].forEach(function (artifact) {
               if (artifact.hasOwnProperty('endpoints')) {
@@ -151,7 +156,7 @@
         });
         it('should create a copy of artifact directory with a new artifactId', function (done) {
           var promises = [];
-          converter._convertMultipleEndpointsToArtifacts(manifest);
+          webpackageConverter._convertMultipleEndpointsToArtifacts(manifest);
           Object.keys(manifest.artifacts).forEach(function (artifactType) {
             manifest.artifacts[ artifactType ].forEach(function (artifact) {
               var expectedArtifactPath = path.resolve(webpackagePath, artifact.artifactId);
@@ -167,15 +172,15 @@
         });
         it('should delete the directory with old artifactId', function (done) {
           var promises = [];
-          converter._convertMultipleEndpointsToArtifacts(manifest);
+          webpackageConverter._convertMultipleEndpointsToArtifacts(manifest);
           var artifacts = [];
           // manifest artifacts to flat array
           Object.keys(manifest.artifacts).forEach(function (artifactType) {
-            artifacts.concat(manifest.artifacts[artifactType]);
+            artifacts.concat(manifest.artifacts[ artifactType ]);
           });
           // itrate originManifest artifacts
           Object.keys(originalManifest.artifacts).forEach(function (artifactType) {
-            originalManifest.artifacts[artifactType].forEach(function (artifact) {
+            originalManifest.artifacts[ artifactType ].forEach(function (artifact) {
               if (!artifacts.find(function (art) { return art.artifactId === artifact.artifactId; })) {
                 // artifact not find in manifest.artifacts flatted list then check directory
                 var expectedArtifactPath = path.resolve(webpackagePath, artifact.artifactId);
@@ -192,16 +197,16 @@
           Promise.all(promises).then(done());
         });
         it('should create new artifact with artifactId [artifactId]#[endpointId] for each endpoint holding coressponding resources and dependencies.', function () {
-          converter._convertMultipleEndpointsToArtifacts(manifest);
+          webpackageConverter._convertMultipleEndpointsToArtifacts(manifest);
           expect(manifest.artifacts.utilities).to.have.lengthOf(3);
           expect(manifest.artifacts.utilities[ 1 ]).to.eql({
-            artifactId: 'my-util2' + converter.endpointSeparator + 'main',
+            artifactId: 'my-util2' + webpackageConverter.endpointSeparator + 'main',
             description: 'This util demonstrates ... This endpoint is used for...',
             resources: [ 'import.html' ],
             dependencies: [ 'd3-charts-lib@1.0/bar-chart/main' ]
           });
           expect(manifest.artifacts.utilities[ 2 ]).to.eql({
-            artifactId: 'my-util2' + converter.endpointSeparator + 'min',
+            artifactId: 'my-util2' + webpackageConverter.endpointSeparator + 'min',
             description: 'This util demonstrates ...',
             resources: [ 'import.min.html' ],
             dependencies: [ 'd3-charts-lib@1.0/bar-chart/main' ]
@@ -210,7 +215,7 @@
       });
       describe('#_convertComponentIdToArtifactIdInMembers()', function () {
         it('should add property "artifactId" and remove property "componentId" for all members in compound components.', function () {
-          converter._convertComponentIdToArtifactIdInMembers(manifest);
+          webpackageConverter._convertComponentIdToArtifactIdInMembers(manifest);
           manifest.artifacts.compoundComponents.forEach(function (compound) {
             compound.members.forEach(function (member) {
               expect(member).to.have.ownProperty('artifactId');
@@ -219,30 +224,236 @@
           });
         });
         it('should assign corresponding [artifactId] value to property "artifactId" for each member', function () {
-          converter._convertComponentIdToArtifactIdInMembers(manifest);
+          webpackageConverter._convertComponentIdToArtifactIdInMembers(manifest);
           var members = manifest.artifacts.compoundComponents[ 0 ].members;
           expect(members[ 0 ].artifactId).to.eql('generic-view');
           expect(members[ 1 ].artifactId).to.eql('generic-view');
           expect(members[ 2 ].artifactId).to.eql('station-view');
         });
       });
+      describe('#_changeRteVersionInManifest()', function () {
+        var expectedManifest;
+        var manifest;
+        beforeEach(function () {
+          manifest = JSON.parse(convertedManifest910);
+          expectedManifest = JSON.parse(convertedManifest910WithRteUpdate);
+        });
+        it('should add property "artifactId" and remove property "componentId" for all members in compound components.', function () {
+          webpackageConverter._changeRteVersionInManifest(manifest);
+
+          manifest.artifacts.elementaryComponents.forEach(function (artifact) {
+            if (artifact.dependencies) {
+              var depList = artifact.dependencies.filter((dep) => dep.webpackageId && dep.webpackageId.startsWith('cubx.core.rte'));
+              depList.should.have.length(1);
+              depList.forEach(function (dep) {
+                dep.should.have.ownProperty('webpackageId', 'cubx.core.rte@2.0.0');
+              });
+            }
+          });
+        });
+        it('should assign corresponding [artifactId] value to property "artifactId" for each member', function () {
+          webpackageConverter._changeRteVersionInManifest(manifest);
+          var dependencies = manifest.artifacts.elementaryComponents[ 0 ].dependencies;
+          var expectedDependencies = expectedManifest.artifacts.elementaryComponents[ 0 ].dependencies;
+          dependencies.should.eql(expectedDependencies);
+        });
+      });
+      describe('#_changeWebcomponentsPathInHTMLFiles()', function () {
+        it('rte version should be changed in my-elementary/demo/index.html file', function (done) {
+          webpackageConverter._changeWebcomponentsPathInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'demo', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              console.log('data', data);
+
+              console.log('data.indexOf(\'/webcomponents-lite/webcomponents-lite.js\')', data.indexOf('/webcomponents-lite/webcomponents-lite.js'));
+              expect(data.indexOf('/webcomponents-lite/webcomponents-lite.js')).to.be.above(-1);
+              expect(data.indexOf('/webcomponents/webcomponents-lite.js')).to.be.equal(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in my-elementary/docs/index.html file', function (done) {
+          webpackageConverter._changeWebcomponentsPathInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'docs', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              console.log('data', data);
+
+              console.log('data.indexOf(\'/webcomponents-lite/webcomponents-lite.js\')', data.indexOf('/webcomponents-lite/webcomponents-lite.js'));
+              expect(data.indexOf('/webcomponents-lite/webcomponents-lite.js')).to.be.above(-1);
+              expect(data.indexOf('/webcomponents/webcomponents-lite.js')).to.be.equal(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in my-compound/demo/index.html file', function (done) {
+          webpackageConverter._changeWebcomponentsPathInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-compound', 'demo', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              console.log('data', data);
+
+              console.log('data.indexOf(\'/webcomponents-lite/webcomponents-lite.js\')', data.indexOf('/webcomponents-lite/webcomponents-lite.js'));
+              expect(data.indexOf('/webcomponents-lite/webcomponents-lite.js')).to.be.above(-1);
+              expect(data.indexOf('/webcomponents/webcomponents-lite.js')).to.be.equal(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in my-compound/docs/index.html file', function (done) {
+          webpackageConverter._changeWebcomponentsPathInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-compound', 'docs', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              console.log('data', data);
+
+              console.log('data.indexOf(\'/webcomponents-lite/webcomponents-lite.js\')', data.indexOf('/webcomponents-lite/webcomponents-lite.js'));
+              expect(data.indexOf('/webcomponents-lite/webcomponents-lite.js')).to.be.above(-1);
+              expect(data.indexOf('/webcomponents/webcomponents-lite.js')).to.be.equal(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in my-app/index.html file', function (done) {
+          webpackageConverter._changeWebcomponentsPathInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-app', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              console.log('data', data);
+
+              console.log('data.indexOf(\'/webcomponents-lite/webcomponents-lite.js\')', data.indexOf('/webcomponents-lite/webcomponents-lite.js'));
+              expect(data.indexOf('/webcomponents-lite/webcomponents-lite.js')).to.be.above(-1);
+              expect(data.indexOf('/webcomponents/webcomponents-lite.js')).to.be.equal(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in app/index.html file', function (done) {
+          webpackageConverter._changeWebcomponentsPathInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'app', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              console.log('data', data);
+
+              console.log('data.indexOf(\'/webcomponents-lite/webcomponents-lite.js\')', data.indexOf('/webcomponents-lite/webcomponents-lite.js'));
+              expect(data.indexOf('/webcomponents-lite/webcomponents-lite.js')).to.be.above(-1);
+              expect(data.indexOf('/webcomponents/webcomponents-lite.js')).to.be.equal(-1);
+              done();
+            });
+          }
+        });
+      });
+      describe('#_changeRTEVersionInHTMLFiles()', function () {
+        it('rte version should be changed in my-elementary/demo/index.html file', function (done) {
+          // test as callback parameter
+          webpackageConverter._changeRTEVersionInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'demo', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in my-elementary/docs/index.html file', function (done) {
+          // test as callback parameter
+          webpackageConverter._changeRTEVersionInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'docs', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in my-compound/demo/index.html file', function (done) {
+          // test as callback parameter
+          webpackageConverter._changeRTEVersionInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-compound', 'demo', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in my-compound/docs/index.html file', function (done) {
+          // test as callback parameter
+          webpackageConverter._changeRTEVersionInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-compound', 'docs', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in my-app/index.html file', function (done) {
+          // test as callback parameter
+          webpackageConverter._changeRTEVersionInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'my-app', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+              done();
+            });
+          }
+        });
+        it('rte version should be changed in app/index.html file', function (done) {
+          // test as callback parameter
+          webpackageConverter._changeRTEVersionInHTMLFiles(test);
+          function test () {
+            var pathToFile = path.resolve(webpackagePath, 'app', 'index.html');
+            fs.readFile(pathToFile, 'utf-8', function (err, data) {
+              expect(err).to.be.null;
+              expect(data).to.be.not.null;
+              expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+              done();
+            });
+          }
+        });
+      });
     });
+
     describe('Complete manifest transformations', function () {
       describe('#_convert()', function () {
         it('should convert given manifest with model version 8.x.x to model version 9.1', function () {
           var manifest = JSON.parse(manifest831);
-          var expectedResult = JSON.parse(convertedManifest910);
-          var convertedManifest = converter._convert(manifest);
+          var expectedResult = JSON.parse(convertedManifest910WithRteUpdate);
+          var convertedManifest = webpackageConverter._convert(manifest);
           expect(convertedManifest).to.eql(expectedResult);
         });
         it('should apply conversion directly on given manifest if it\'s an object', function () {
           var manifestAsObject = JSON.parse(manifest831);
-          var convertedManifest = converter._convert(manifestAsObject);
+          var convertedManifest = webpackageConverter._convert(manifestAsObject);
           expect(convertedManifest).equal(manifestAsObject);
         });
         it('should return converted manifest as object if manifest is given as JSON string', function () {
           var manifestAsJson = manifest831;
-          var convertedManifest = converter._convert(manifestAsJson);
+          var convertedManifest = webpackageConverter._convert(manifestAsJson);
           expect(convertedManifest).to.be.instanceOf(Object);
         });
       });
@@ -259,8 +470,8 @@
           });
         });
         it('should convert given manifest with model version 8.x.x to model version 9.1', function (done) {
-          var expectedResult = JSON.parse(convertedManifest910);
-          converter.convert();
+          var expectedResult = JSON.parse(convertedManifest910WithRteUpdate);
+          webpackageConverter.convert();
           fs.readFile(manifestPathName, 'utf8', function (err, data) {
             expect(err).to.be.null;
             var convertedManifest = JSON.parse(data);

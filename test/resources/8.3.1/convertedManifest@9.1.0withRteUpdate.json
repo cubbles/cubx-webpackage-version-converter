@@ -214,8 +214,7 @@
           },
           {
             "artifactId": "CubxPolymer",
-            "webpackageId": "cubx.core.rte@1.10.0",
-            "endpointId": "main"
+            "webpackageId": "cubx.core.rte@2.0.0"
           }
         ]
       },
@@ -268,8 +267,7 @@
           },
           {
             "artifactId": "CubxPolymer",
-            "webpackageId": "cubx.core.rte@1.10.0",
-            "endpointId": "main"
+            "webpackageId": "cubx.core.rte@2.0.0"
           }
         ]
       },
@@ -322,8 +320,7 @@
           },
           {
             "artifactId": "CubxPolymer",
-            "webpackageId": "cubx.core.rte@1.10.0",
-            "endpointId": "main"
+            "webpackageId": "cubx.core.rte@2.0.0"
           }
         ]
       }

@@ -13,10 +13,11 @@ var optionDefinitions = [
 var options = commandLineArgs(optionDefinitions);
 
 if (!options.path) {
-  console.error('Missed necessary parameter "webpackagePath". Usage: cubx-webpacakge-version-converter <webpackagPath> [--loglevel <logLevel>]');
+  console.error('Missed necessary parameter "webpackagePath". Usage: cubx-webpackage-version-converter <webpackagPath> [--loglevel <logLevel>]');
   process.exit(0);
 } else {
   webpackagePath = options.path;
 }
 var converter = new Converter(webpackagePath);
 converter.convert();
+
