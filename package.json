@@ -1,6 +1,6 @@
 {
   "name": "cubx-webpackage-version-converter",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Webpackage version converter from modelVersion 8.x to 9.1",
   "main": "lib/converter.js",
   "scripts": {
