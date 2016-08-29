@@ -47,9 +47,15 @@
     afterEach(function () {
       WebpackageConverter = null;
     });
-    it('callback function schould be called', function () {
+    it('callback function should be called', function () {
       converter.convert(callback);
       callback.should.be.calledOnce;
+    });
+    it('missing callback function should be not called', function () {
+      expect(function () {
+        converter.convert();
+      }).to.not.throw(Error);
+
     });
   });
 })();
