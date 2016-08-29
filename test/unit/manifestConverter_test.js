@@ -2,52 +2,52 @@
 (function () {
   // function (manifestConverter, manifest831, convertedManifest910) {
   'use strict';
-  var convertedManifest910;
-  var manifest831;
-  var convertedManifest910WithRteUpdate;
-  var webpackageConverter;
-  var path;
-  var fs;
-  var webpackageName;
-  var webpackagePath;
-  var testRootPath;
-  var rteVersion;
-  beforeEach(function (done) {
-    path = require('path');
-    fs = require('fs-extra');
-    testRootPath = path.join(process.cwd(), 'test');
-    webpackageName = 'my-webpackage';
-    var testPath = path.resolve(testRootPath, 'webpackages', webpackageName);
-    webpackagePath = testPath;
-    rteVersion = '2.0.0';
-    var tempPath = path.resolve(__dirname, '../resources/8.3.1/');
-    var WebpackageConverter = require('../../lib/webpackageConverter');
-    webpackageConverter = new WebpackageConverter(webpackagePath, rteVersion);
-    fs.copy(tempPath, testPath, function (err) {
-      if (err) {
-        throw new Error(err);
-      } else {
-        var pathName = path.resolve(testPath, 'convertedManifest@9.1.0.json');
-        console.log(pathName);
-        convertedManifest910 = fs.readFileSync(pathName, 'utf8');
-        pathName = path.resolve(testPath, 'manifest@8.3.1.json');
-        manifest831 = fs.readFileSync(pathName, 'utf8');
-        pathName = path.resolve(testPath, 'convertedManifest@9.1.0withRteUpdate.json');
-        convertedManifest910WithRteUpdate = fs.readFileSync(pathName, 'utf8');
-      }
-      done();
-    });
-  });
-  afterEach(function (done) {
-    var testPathRoot = path.resolve(testRootPath, 'webpackages');
-    fs.remove(testPathRoot, function (err) {
-      if (err) {
-        throw new Error(err);
-      }
-      done();
-    });
-  });
   describe('ManifestConverter', function () {
+    var convertedManifest910;
+    var manifest831;
+    var convertedManifest910WithRteUpdate;
+    var webpackageConverter;
+    var path;
+    var fs;
+    var webpackageName;
+    var webpackagePath;
+    var testRootPath;
+    var rteVersion;
+    beforeEach(function (done) {
+      path = require('path');
+      fs = require('fs-extra');
+      testRootPath = path.join(process.cwd(), 'test');
+      webpackageName = 'my-webpackage';
+      var testPath = path.resolve(testRootPath, 'webpackages', webpackageName);
+      webpackagePath = testPath;
+      rteVersion = '2.0.0';
+      var tempPath = path.resolve(__dirname, '../resources/8.3.1/');
+      var WebpackageConverter = require('../../lib/webpackageConverter');
+      webpackageConverter = new WebpackageConverter(webpackagePath, rteVersion);
+      fs.copy(tempPath, testPath, function (err) {
+        if (err) {
+          throw new Error(err);
+        } else {
+          var pathName = path.resolve(testPath, 'convertedManifest@9.1.0.json');
+          console.log(pathName);
+          convertedManifest910 = fs.readFileSync(pathName, 'utf8');
+          pathName = path.resolve(testPath, 'manifest@8.3.1.json');
+          manifest831 = fs.readFileSync(pathName, 'utf8');
+          pathName = path.resolve(testPath, 'convertedManifest@9.1.0withRteUpdate.json');
+          convertedManifest910WithRteUpdate = fs.readFileSync(pathName, 'utf8');
+        }
+        done();
+      });
+    });
+    afterEach(function (done) {
+      var testPathRoot = path.resolve(testRootPath, 'webpackages');
+      fs.remove(testPathRoot, function (err) {
+        if (err) {
+          throw new Error(err);
+        }
+        done();
+      });
+    });
     describe('Single converter methods', function () {
       var manifest;
       var originalManifest;
