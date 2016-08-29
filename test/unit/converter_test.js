@@ -1,4 +1,4 @@
-/* globals describe, it, beforeEach, afterEach, before, after, expect, sinon */
+/* globals describe, it, beforeEach, afterEach, expect, sinon */
 (function () {
   'use strict';
   describe('Converter', function () {
@@ -11,51 +11,79 @@
     var expectedWebpackagePath;
     var expectedRteVersion;
     var converter;
-    var callback;
-    before(function () {
-      expectedRteVersion = '2.0.0';
-      proxyquire = require('proxyquire');
-      inquirer = proxyquire('inquirer', {
-        'prompt': function (config) {
-          return new Promise(function (resolve, reject) {
-            resolve({ rteVersion: expectedRteVersion });
-          });
-        },
-        '@noCallThru': true,
-        '@global': true
-      });
-    });
-    after(function () {
-      inquirer = null;
-    });
-    beforeEach(function () {
-      var expectedWebpackagePath = '../webpackages/my-webpackage';
-      WebpackageConverter = proxyquire('../../lib/WebpackageConverter', {
-        'convert': function (webpackagePath, rteVersion) {
-          expect(webpackagePath).to.be.exists;
-          webpackagePath.should.be.equal(expectedWebpackagePath);
-          expect(rteVersion).to.be.exists;
-          rteVersion.should.be.equal(expectedRteVersion);
-        },
-        '@noCallThru': true,
-        '@global': true
-      });
-      var Converter = require('../../lib/converter');
-      converter = new Converter(expectedWebpackagePath);
-      callback = sinon.spy();
-    });
-    afterEach(function () {
-      WebpackageConverter = null;
-    });
-    it('callback function should be called', function () {
-      converter.convert(callback);
-      callback.should.be.calledOnce;
-    });
-    it('missing callback function should be not called', function () {
-      expect(function () {
-        converter.convert();
-      }).to.not.throw(Error);
+    var path;
+    var fs;
+    var webpackageName;
 
+    var testRootPath;
+    var spyCallback;
+    var Converter;
+    beforeEach(function (done) {
+      proxyquire = require('proxyquire');
+      path = require('path');
+      fs = require('fs-extra');
+      testRootPath = path.join(process.cwd(), 'test');
+      webpackageName = 'my-webpackage';
+      var testPath = path.resolve(testRootPath, 'webpackages', webpackageName);
+      var tempPath = path.resolve(__dirname, '../resources/8.3.1/');
+      Converter = proxyquire('../../lib/converter', {
+        'inquirer': {
+          'prompt': function (config) {
+            return new Promise(function (resolve, reject) {
+              resolve({ rteVersion: expectedRteVersion });
+            });
+          }
+        }
+      });
+      expectedRteVersion = '2.0.0';
+      expectedWebpackagePath = testPath;
+
+      fs.copy(tempPath, testPath, function (err) {
+        if (err) {
+          throw new Error(err);
+        }
+        done();
+      });
     });
+    afterEach(function (done) {
+      var testPathRoot = path.resolve(testRootPath, 'webpackages');
+      fs.remove(testPathRoot, function (err) {
+        if (err) {
+          throw new Error(err);
+        }
+        done();
+      });
+    });
+    describe('call callback', function () {
+      beforeEach(function (done) {
+        function callback () {
+          console.log('hallo');
+          done();
+        };
+        spyCallback = sinon.spy(callback);
+        converter = new Converter(expectedWebpackagePath);
+        converter.convert(spyCallback);
+      });
+
+      it('callback function should be called', function () {
+        spyCallback.should.be.calledOnce;
+      });
+    });
+    describe('absent callback', function () {
+      beforeEach(function () {
+        converter = new Converter(expectedWebpackagePath);
+      });
+
+      it('callback function should be called', function () {
+        it('missing callback function should be not called', function () {
+          expect(function () {
+            converter.convert();
+          }).to.not.throw(Error);
+
+        });
+      });
+    });
+
   });
-})();
+})
+();

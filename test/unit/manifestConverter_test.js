@@ -29,9 +29,8 @@
           throw new Error(err);
         } else {
           var pathName = path.resolve(testPath, 'convertedManifest@9.1.0.json');
-          console.log(pathName);
           convertedManifest910 = fs.readFileSync(pathName, 'utf8');
-          pathName = path.resolve(testPath, 'manifest@8.3.1.json');
+          pathName = path.resolve(testPath, 'manifest.webpackage');
           manifest831 = fs.readFileSync(pathName, 'utf8');
           pathName = path.resolve(testPath, 'convertedManifest@9.1.0withRteUpdate.json');
           convertedManifest910WithRteUpdate = fs.readFileSync(pathName, 'utf8');
