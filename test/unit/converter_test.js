@@ -74,16 +74,12 @@
         converter = new Converter(expectedWebpackagePath);
       });
 
-      it('callback function should be called', function () {
-        it('missing callback function should be not called', function () {
-          expect(function () {
-            converter.convert();
-          }).to.not.throw(Error);
-
-        });
+      it('missing callback function should be not called', function () {
+        expect(function () {
+          converter.convert();
+        }).to.not.throw(Error);
       });
-    });
 
+    });
   });
-})
-();
+})();
