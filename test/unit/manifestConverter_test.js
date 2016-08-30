@@ -61,17 +61,17 @@
         it('modelVersion "8.3.1" should get the transformmationlist with key "8"', function () {
           var list = webpackageConverter._determineTransformationList('8.3.1');
           expect(list).to.be.exists;
-          list.should.be.eql(webpackageConverter._transformationMatrix['8']);
+          list.should.be.eql(webpackageConverter._transformationMatrix[ '8' ]);
         });
         it('modelVersion "8.0.0" should get the transformmationlist with key "8"', function () {
           var list = webpackageConverter._determineTransformationList('8.0.0');
           expect(list).to.be.exists;
-          list.should.be.eql(webpackageConverter._transformationMatrix['8']);
+          list.should.be.eql(webpackageConverter._transformationMatrix[ '8' ]);
         });
         it('modelVersion "9.1.0" should get the transformmationlist with key "9.1.0"', function () {
           var list = webpackageConverter._determineTransformationList('9.1.0');
           expect(list).to.be.exists;
-          list.should.be.eql(webpackageConverter._transformationMatrix['9.1.0']);
+          list.should.be.eql(webpackageConverter._transformationMatrix[ '9.1.0' ]);
         });
       });
       describe('#_addResourcesArrayToArtifacts()', function () {
@@ -327,56 +327,121 @@
         });
       });
       describe('#_changeRTEVersionInHTMLFiles()', function () {
-        it('rte version should be changed in my-elementary/demo/index.html file', function () {
-          webpackageConverter._changeRTEVersionInHTMLFiles();
-          var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'demo', 'index.html');
-          var data = fs.readFileSync(pathToFile, 'utf-8');
-          expect(data).to.be.not.null;
-          expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+        describe('change to release version 2.0.0', function () {
+          it('rte version should be changed in my-elementary/demo/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'demo', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in my-elementary/docs/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'docs', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in my-compound/demo/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-compound', 'demo', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in my-compound/docs/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-compound', 'docs', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in my-app/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-app', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in app/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'app', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in app/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'my-elementary-style.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            pathToFile = path.resolve(testRootPath, 'resources', '8.3.1', 'my-elementary', 'my-elementary-style.html');
+            var origData = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            data.should.be.equal(origData);
+          });
         });
-        it('rte version should be changed in my-elementary/docs/index.html file', function () {
-          webpackageConverter._changeRTEVersionInHTMLFiles();
-          var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'docs', 'index.html');
-          var data = fs.readFileSync(pathToFile, 'utf-8');
-          expect(data).to.be.not.null;
-          expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
-        });
-        it('rte version should be changed in my-compound/demo/index.html file', function () {
-          webpackageConverter._changeRTEVersionInHTMLFiles();
-          var pathToFile = path.resolve(webpackagePath, 'my-compound', 'demo', 'index.html');
-          var data = fs.readFileSync(pathToFile, 'utf-8');
-          expect(data).to.be.not.null;
-          expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
-        });
-        it('rte version should be changed in my-compound/docs/index.html file', function () {
-          webpackageConverter._changeRTEVersionInHTMLFiles();
-          var pathToFile = path.resolve(webpackagePath, 'my-compound', 'docs', 'index.html');
-          var data = fs.readFileSync(pathToFile, 'utf-8');
-          expect(data).to.be.not.null;
-          expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
-        });
-        it('rte version should be changed in my-app/index.html file', function () {
-          webpackageConverter._changeRTEVersionInHTMLFiles();
-          var pathToFile = path.resolve(webpackagePath, 'my-app', 'index.html');
-          var data = fs.readFileSync(pathToFile, 'utf-8');
-          expect(data).to.be.not.null;
-          expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
-        });
-        it('rte version should be changed in app/index.html file', function () {
-          webpackageConverter._changeRTEVersionInHTMLFiles();
-          var pathToFile = path.resolve(webpackagePath, 'app', 'index.html');
-          var data = fs.readFileSync(pathToFile, 'utf-8');
-          expect(data).to.be.not.null;
-          expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
-        });
-        it('rte version should be changed in app/index.html file', function () {
-          webpackageConverter._changeRTEVersionInHTMLFiles();
-          var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'my-elementary-style.html');
-          var data = fs.readFileSync(pathToFile, 'utf-8');
-          pathToFile = path.resolve(testRootPath, 'resources', '8.3.1', 'my-elementary', 'my-elementary-style.html');
-          var origData = fs.readFileSync(pathToFile, 'utf-8');
-          expect(data).to.be.not.null;
-          data.should.be.equal(origData);
+        describe('change to snapshotVersion version 2.1.0-SNAPSHOT', function () {
+          var retRTEVersion;
+          var rteSnapshotVersion;
+          beforeEach(function () {
+            rteSnapshotVersion = '2.1.0-SNAPSHOT';
+            retRTEVersion = webpackageConverter._rteTargetVersion;
+            webpackageConverter._rteTargetVersion = rteSnapshotVersion;
+          });
+          afterEach(function () {
+            webpackageConverter._rteTargetVersion = retRTEVersion;
+          });
+          it('rte version should be changed in my-elementary/demo/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'demo', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteSnapshotVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in my-elementary/docs/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'docs', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteSnapshotVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in my-compound/demo/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-compound', 'demo', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteSnapshotVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in my-compound/docs/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-compound', 'docs', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteSnapshotVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in my-app/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-app', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteSnapshotVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in app/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'app', 'index.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            expect(data.indexOf('cubx.core.rte@' + rteSnapshotVersion + '/crc-loader')).to.be.above(-1);
+          });
+          it('rte version should be changed in app/index.html file', function () {
+            webpackageConverter._changeRTEVersionInHTMLFiles();
+            var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'my-elementary-style.html');
+            var data = fs.readFileSync(pathToFile, 'utf-8');
+            pathToFile = path.resolve(testRootPath, 'resources', '8.3.1', 'my-elementary', 'my-elementary-style.html');
+            var origData = fs.readFileSync(pathToFile, 'utf-8');
+            expect(data).to.be.not.null;
+            data.should.be.equal(origData);
+          });
         });
       });
     });
