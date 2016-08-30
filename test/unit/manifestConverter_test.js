@@ -56,6 +56,24 @@
         manifest = JSON.parse(manifest831);
         originalManifest = JSON.parse(manifest831);
       });
+
+      describe('#_determineTransformationList()', function(){
+        it('modelVersion "8.3.1" should get the transformmationlist with key "8"', function () {
+          var list = webpackageConverter._determineTransformationList('8.3.1');
+          expect(list).to.be.exists;
+          list.should.be.eql(webpackageConverter._transformationMatrix['8']);
+        });
+        it('modelVersion "8.0.0" should get the transformmationlist with key "8"', function () {
+          var list = webpackageConverter._determineTransformationList('8.0.0');
+          expect(list).to.be.exists;
+          list.should.be.eql(webpackageConverter._transformationMatrix['8']);
+        });
+        it('modelVersion "9.1.0" should get the transformmationlist with key "9.1.0"', function () {
+          var list = webpackageConverter._determineTransformationList('9.1.0');
+          expect(list).to.be.exists;
+          list.should.be.eql(webpackageConverter._transformationMatrix['9.1.0']);
+        });
+      });
       describe('#_addResourcesArrayToArtifacts()', function () {
         it('should add property "resources" containing an empty array to each artifact out of type [elementaryComponents|compoundComponents|utilities].', function () {
           webpackageConverter._addResourcesArrayToArtifacts(manifest);

@@ -57,7 +57,6 @@
     describe('call callback', function () {
       beforeEach(function (done) {
         function callback () {
-          console.log('hallo');
           done();
         };
         spyCallback = sinon.spy(callback);
