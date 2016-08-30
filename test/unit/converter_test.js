@@ -78,7 +78,6 @@
           converter.convert();
         }).to.not.throw(Error);
       });
-
     });
   });
 })();

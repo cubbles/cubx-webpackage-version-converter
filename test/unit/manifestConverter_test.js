@@ -57,7 +57,7 @@
         originalManifest = JSON.parse(manifest831);
       });
 
-      describe('#_determineTransformationList()', function(){
+      describe('#_determineTransformationList()', function () {
         it('modelVersion "8.3.1" should get the transformmationlist with key "8"', function () {
           var list = webpackageConverter._determineTransformationList('8.3.1');
           expect(list).to.be.exists;
@@ -368,6 +368,15 @@
           var data = fs.readFileSync(pathToFile, 'utf-8');
           expect(data).to.be.not.null;
           expect(data.indexOf('cubx.core.rte@' + rteVersion + '/crc-loader')).to.be.above(-1);
+        });
+        it('rte version should be changed in app/index.html file', function () {
+          webpackageConverter._changeRTEVersionInHTMLFiles();
+          var pathToFile = path.resolve(webpackagePath, 'my-elementary', 'my-elementary-style.html');
+          var data = fs.readFileSync(pathToFile, 'utf-8');
+          pathToFile = path.resolve(testRootPath, 'resources', '8.3.1', 'my-elementary', 'my-elementary-style.html');
+          var origData = fs.readFileSync(pathToFile, 'utf-8');
+          expect(data).to.be.not.null;
+          data.should.be.equal(origData);
         });
       });
     });

@@ -5,7 +5,7 @@
   "main": "lib/converter.js",
   "scripts": {
     "prepublish": "npm run-script lint",
-    "lint": "eslint lib/**/*.js bin/**/*.js *.js",
+    "lint": "eslint lib/**/*.js bin/**/*.js test/unit/**/*.js *.js",
     "test": "mocha"
   },
   "repository": {
