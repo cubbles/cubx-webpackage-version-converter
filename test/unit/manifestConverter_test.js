@@ -28,11 +28,11 @@
         if (err) {
           throw new Error(err);
         } else {
-          var pathName = path.resolve(testPath, 'convertedManifest@9.1.0.json');
+          var pathName = path.resolve(testPath, 'convertedManifest@9.1.1.json');
           convertedManifest910 = fs.readFileSync(pathName, 'utf8');
           pathName = path.resolve(testPath, 'manifest.webpackage');
           manifest831 = fs.readFileSync(pathName, 'utf8');
-          pathName = path.resolve(testPath, 'convertedManifest@9.1.0withRteUpdate.json');
+          pathName = path.resolve(testPath, 'convertedManifest@9.1.1withRteUpdate.json');
           convertedManifest910WithRteUpdate = fs.readFileSync(pathName, 'utf8');
         }
         done();
@@ -68,10 +68,10 @@
           expect(list).to.be.exists;
           list.should.be.eql(webpackageConverter._transformationMatrix[ '8' ]);
         });
-        it('modelVersion "9.1.0" should get the transformmationlist with key "9.1.0"', function () {
-          var list = webpackageConverter._determineTransformationList('9.1.0');
+        it('modelVersion "9.1.1" should get the transformmationlist with key "9.1.1"', function () {
+          var list = webpackageConverter._determineTransformationList('9.1.1');
           expect(list).to.be.exists;
-          list.should.be.eql(webpackageConverter._transformationMatrix[ '9.1.0' ]);
+          list.should.be.eql(webpackageConverter._transformationMatrix[ '9.1.1' ]);
         });
       });
       describe('#_addResourcesArrayToArtifacts()', function () {
