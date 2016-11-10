@@ -2,7 +2,7 @@
   "name": "my-webpackage",
   "groupId": "org.example",
   "version": "0.2.0",
-  "modelVersion": "9.1.0",
+  "modelVersion": "9.1.1",
   "docType": "webpackage",
   "author": {
     "name": "John Doe",
@@ -214,7 +214,8 @@
           },
           {
             "artifactId": "CubxPolymer",
-            "webpackageId": "cubx.core.rte@2.0.0"
+            "webpackageId": "cubx.core.rte@1.10.0",
+            "endpointId": "main"
           }
         ]
       },
@@ -267,7 +268,8 @@
           },
           {
             "artifactId": "CubxPolymer",
-            "webpackageId": "cubx.core.rte@2.0.0"
+            "webpackageId": "cubx.core.rte@1.10.0",
+            "endpointId": "main"
           }
         ]
       },
@@ -320,7 +322,8 @@
           },
           {
             "artifactId": "CubxPolymer",
-            "webpackageId": "cubx.core.rte@2.0.0"
+            "webpackageId": "cubx.core.rte@1.10.0",
+            "endpointId": "main"
           }
         ]
       }
