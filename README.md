@@ -1,5 +1,7 @@
 # cubx-webpackage-version-converter
 
+[![Build Status](https://travis-ci.org/cubbles/cubx-webpackage-version-converter.svg?branch=master)](https://travis-ci.org/cubbles/cubx-webpackage-version-converter.svg?branch=master)
+
 Version converter for cubbles webpackages. Convert an webapckage with modelVersion 8.x to modelVersion 9.1.
  
  
